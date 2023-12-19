@@ -1,3 +1,5 @@
+--!nonstrict
+
 local usableThread: thread?
 
 local function pass(fn: (...unknown) -> (), ...): ()
@@ -13,10 +15,22 @@ local function yield(): ()
 	end
 end
 
+type Disconnect = () -> ()
+
+export type Signal<T...> = {
+	__tostring: (self: Signal<T...>) -> "CustomSignal",
+	__call: (self: Signal<T...>, T...) -> (),
+	Fire: (self: Signal<T...>, T...) -> (),
+	Connect: (self: Signal<T...>, (T...) -> ()) -> Disconnect,
+	Once: (self: Signal<T...>, (T...) -> ()) -> Disconnect,
+	Wait: (self: Signal<T...>) -> T...,
+	DisconnectAll: (self: Signal<T...>) -> ()
+}
+
 local Signal = {}
 Signal.__index = Signal
 
-function Signal:__tostring()
+function Signal:__tostring(): "CustomSignal"
 	return "CustomSignal"
 end
 
