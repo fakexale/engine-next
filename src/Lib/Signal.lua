@@ -43,7 +43,7 @@ function Signal.new<T...>(): Signal<T...>
 end
 
 function Signal:Fire(...)
-	for callback: in self do
+	for callback in self do
 		if not usableThread then
 			usableThread = coroutine.create(yield)
 			coroutine.resume(usableThread)
