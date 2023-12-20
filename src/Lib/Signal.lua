@@ -1,5 +1,3 @@
---!nonstrict
-
 local usableThread: thread?
 
 local function pass(fn: (...unknown) -> (), ...): ()
@@ -17,7 +15,7 @@ end
 
 type Disconnect = () -> ()
 
-export type Signal<T...> = {
+export type Module<T...> = {
 	__tostring: (self: Signal<T...>) -> "CustomSignal",
 	__call: (self: Signal<T...>, T...) -> (),
 	Fire: (self: Signal<T...>, T...) -> (),
@@ -26,6 +24,8 @@ export type Signal<T...> = {
 	Wait: (self: Signal<T...>) -> T...,
 	DisconnectAll: (self: Signal<T...>) -> ()
 }
+
+export type Signal<T...> = typeof(setmetatable({} :: { [(T...) -> ()]: boolean }, {} :: Module<T...>))
 
 local Signal = {}
 Signal.__index = Signal
@@ -38,11 +38,11 @@ function Signal:__call(signal, ...)
 	return signal:Fire(...)
 end
 
-function Signal.new()
+function Signal.new<T...>(): Signal<T...>
 	return setmetatable({}, Signal)
 end
 
-function Signal:Fire(...: any | { any })
+function Signal:Fire(...)
 	for callback in self do
 		if not usableThread then
 			usableThread = coroutine.create(yield)
