@@ -3,3 +3,6 @@
 
 # Project build file
 /*.rbxm
+
+# Sourcemap
+sourcemap.json
