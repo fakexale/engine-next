@@ -15,7 +15,9 @@ local DefaultOptions: StartOptions = {
 	StudioDebugging = true,
 }
 
-local EngineServer = {}
+local EngineServer = {
+	Lib = script.Parent.Lib,
+}
 EngineServer.Started = false
 EngineServer.SignalTest = Signal.new()
 
