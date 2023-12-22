@@ -1,14 +1,14 @@
 local Table = {}
 
-function Table.DeepCopy(target: { [unknown]: unknown }): { [unknown]: unknown }
+function Table.DeepCopy<T>(target: T): T
 	local dummy = table.clone(target)
 
-	for p, val in dummy do
+	for p, val: { T } | any in dummy do
 		if typeof(val) ~= "table" then
 			continue
 		end
 
-		dummy[p] = Table.DeepCopy(val :: { [unknown]: unknown })
+		dummy[p] = Table.DeepCopy(val)
 	end
 
 	return dummy
@@ -18,10 +18,10 @@ end
 	In dictionary1 we trust, in case of duplicate indexes:
 		dictionary1's value will always prevail.
 ]]
-function Table.MergeDictionaries(
-	dictionary1: { [unknown]: unknown },
-	dictionary2: { [unknown]: unknown }
-): { [unknown]: unknown }
+function Table.MergeDictionaries<T, K>(
+	dictionary1: T,
+	dictionary2: K
+): T & K
 	local dummy = table.clone(dictionary1)
 
 	for k, val in dictionary2 do
@@ -35,7 +35,7 @@ function Table.MergeDictionaries(
 	return dummy
 end
 
-function Table.MergeArrays(array1: { unknown }, array2: { unknown }): { unknown }
+function Table.MergeArrays<T, K>(array1: { T }, array2: { K }): { T & K }
 	local result = table.clone(array1)
 
 	table.move(array2, 1, #array2, #result + 1, result)
@@ -43,7 +43,7 @@ function Table.MergeArrays(array1: { unknown }, array2: { unknown }): { unknown 
 	return result
 end
 
-function Table.Reconcile(target: { [unknown]: unknown }, template: { [unknown]: any }): { [unknown]: unknown }
+function Table.Reconcile<T, K>(target: { T }, template: { K }): { T & K }
 	local dummy = table.clone(target)
 
 	for k, val in template do
@@ -65,7 +65,7 @@ function Table.Reconcile(target: { [unknown]: unknown }, template: { [unknown]: 
 	return dummy
 end
 
-function Table.Keys(target: { [unknown]: unknown }): { unknown }
+function Table.Keys<K>(target: { [K]: unknown }): { K }
 	local keys = {}
 
 	for k in target do
@@ -75,7 +75,7 @@ function Table.Keys(target: { [unknown]: unknown }): { unknown }
 	return keys
 end
 
-function Table.Values(target: { [unknown]: unknown }): { unknown }
+function Table.Values<V>(target: { [unknown]: V }): { V }
 	local values = {}
 
 	for _, val in target do
@@ -114,10 +114,10 @@ function Table.IsArray(target: { [unknown]: unknown }): boolean
 	return indexes == #target
 end
 
-function Table.Filter(
-	target: { [unknown]: unknown },
-	filterCallback: (value: unknown) -> boolean
-): { [unknown]: unknown }
+function Table.Filter<V>(
+	target: { [unknown]: V },
+	filterCallback: (value: V) -> boolean
+): { V }
 	local dummy = {}
 
 	for _, val in target do
@@ -131,7 +131,7 @@ function Table.Filter(
 	return dummy
 end
 
-function Table.Some(target: { [unknown]: unknown }, filterCallback: (value: unknown) -> boolean): boolean
+function Table.Some<V>(target: { [unknown]: V }, filterCallback: (value: V) -> boolean): boolean
 	for _, val in target do
 		if filterCallback(val) == true then
 			return true
@@ -141,7 +141,7 @@ function Table.Some(target: { [unknown]: unknown }, filterCallback: (value: unkn
 	return false
 end
 
-function Table.Every(target: { [unknown]: unknown }, filterCallback: (value: unknown) -> boolean): boolean
+function Table.Every<V>(target: { [unknown]: V }, filterCallback: (value: V) -> boolean): boolean
 	for _, val in target do
 		if filterCallback(val) then
 			continue
