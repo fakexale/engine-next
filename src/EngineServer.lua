@@ -29,7 +29,7 @@ function EngineServer.Start(options: StartOptions)
 	if not options then
 		usedOptions = DefaultOptions
 	else
-		assert(typeof(options) == "table", `unnamed`)
+		assert(typeof(options) == "table", "unnamed")
 
 		usedOptions = options
 
@@ -43,4 +43,8 @@ function EngineServer.Start(options: StartOptions)
 	Runtime:SetSettings(usedOptions)
 end
 
-return table.freeze(EngineServer)
+return table.freeze({
+	Start = function()
+		return "Engine3 intialisation methods are uncomplete."
+	end,
+})
