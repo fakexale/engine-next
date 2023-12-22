@@ -17,12 +17,11 @@ type Disconnect = () -> ()
 
 export type Module<T...> = {
 	__tostring: (self: Signal<T...>) -> "CustomSignal",
-	__call: (self: Signal<T...>, T...) -> (),
 	Fire: (self: Signal<T...>, T...) -> (),
 	Connect: (self: Signal<T...>, (T...) -> ()) -> Disconnect,
 	Once: (self: Signal<T...>, (T...) -> ()) -> Disconnect,
 	Wait: (self: Signal<T...>) -> T...,
-	DisconnectAll: (self: Signal<T...>) -> ()
+	DisconnectAll: (self: Signal<T...>) -> (),
 }
 
 export type Signal<T...> = typeof(setmetatable({} :: { [(T...) -> ()]: boolean }, {} :: Module<T...>))
@@ -32,10 +31,6 @@ Signal.__index = Signal
 
 function Signal:__tostring(): "CustomSignal"
 	return "CustomSignal"
-end
-
-function Signal:__call(signal, ...)
-	return signal:Fire(...)
 end
 
 function Signal.new<T...>(): Signal<T...>
