@@ -2,6 +2,10 @@
   "name": "Engine3",
   
   "tree": {
-    "$path": "src"
+    "$path": "src",
+
+    "Packages": {
+      "$path": "Packages"
+    }
   }
 }
