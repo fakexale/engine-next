@@ -1,0 +1,37 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "install packages",
+            "type": "shell",
+            "command": "wally install"
+        },
+        {
+            "label": "sourcemap generate",
+            "type": "shell",
+            "command": "rojo sourcemap -o sourcemap.json default.project.json"
+        },
+        {
+            "label": "setup",
+            "type": "shell",
+
+            "dependsOn": ["install packages", "sourcemap generate"],
+            "dependsOrder": "sequence",
+
+            "group": { "kind": "build", "isDefault": true },
+            "problemMatcher": [],
+        },
+        {
+            "label": "build",
+            "type": "shell",
+
+            "dependsOn": ["sourcemap generate"],
+            "dependsOrder": "sequence",
+
+            "command": "rojo build -o build.rbxm default.project.json",
+
+            "group": { "kind": "build", "isDefault": true },
+            "problemMatcher": [],
+        },
+    ]
+}

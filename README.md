@@ -9,8 +9,12 @@ Primary usage involves using a tool to sync filesystem files into Roblox Studio.
 Currently unfinished, with spotty support for features all around.
 
 ## Compilation
-Uses ``v7.4.0-rc3`` of Rojo. Assuming you have it installed, you can type this in a terminal to compile to a ``rbxm``. Also make sure Wally Packages are setup before doing so.
+Compilation on Visual Studio Code is easy, for other editors you'll need to enter commands manually, however.
 
-```shell
-rojo build -o "build.rbxm"
-``` 
+### VSCode
+**Build Tasks**
+Access Build Tasks with ``Ctrl+Shift+B``
+
+Then, if you don't have packages installed, begin with ``setup``. After that, just do ``build``.
+
+You will now have a ``build.rbxm`` model file in your project root. Have fun.
