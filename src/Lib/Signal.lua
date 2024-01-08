@@ -37,6 +37,19 @@ function Signal.new<T...>(): Signal<T...>
 	return setmetatable({}, Signal)
 end
 
+-- // untested, rewrite later.
+function Signal.wrap<T...>(scriptSignal: RBXScriptSignal): Signal<T...>
+	assert(typeof(scriptSignal) == "RBXScriptSignal", "ScriptSignal is not a RBXScriptSignal!")
+
+	local self = Signal.new()
+
+	scriptSignal:Connect(function(...)
+		self:Fire(...)
+	end)
+
+	return self
+end
+
 function Signal:Fire(...)
 	for callback in self do
 		if not usableThread then
@@ -49,7 +62,7 @@ function Signal:Fire(...)
 end
 
 function Signal:Connect(callback)
-	assert(typeof(callback) == "function", `Callback is not a function!`)
+	assert(typeof(callback) == "function", "Callback is not a function!")
 	assert(self[callback] ~= nil, "Callback already connected to Signal!")
 
 	self[callback] = true
@@ -60,7 +73,7 @@ function Signal:Connect(callback)
 end
 
 function Signal:Once(callback)
-	assert(typeof(callback) == "function", `Callback is not a function!`)
+	assert(typeof(callback) == "function", "Callback is not a function!")
 
 	local connection
 
@@ -86,4 +99,7 @@ function Signal:DisconnectAll()
 	table.clear(self)
 end
 
-return table.freeze(Signal)
+return table.freeze({
+	new = Signal.new,
+	wrap = Signal.wrap
+})
