@@ -1,7 +1,7 @@
 <div align="center">
 <picture>
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/fakexale/engine-next/img/engine-light.png">
-  <img src="https://raw.githubusercontent.com/fakexale/engine-next/img/engine-dark.png">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/fakexale/engine-next/main/img/engine-light.png">
+  <img src="https://raw.githubusercontent.com/fakexale/engine-next/main/img/engine-dark.png">
 </picture>
 
 [![](https://img.shields.io/github/license/fakexale/engine-next)](https://github.com/fakexale/engine-next/blob/main/LICENSE)
