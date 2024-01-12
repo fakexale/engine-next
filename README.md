@@ -1,20 +1,36 @@
-# Engine3
-[![License](https://img.shields.io/github/license/fakexale/engine-next)](https://github.com/fakexale/engine-next/blob/main/LICENSE)
-[![Rojo](https://img.shields.io/badge/made_with-rojo-red)](https://github.com/rojo-rbx/rojo)
-[![Humour](https://img.shields.io/badge/chefs_kiss-do_they_really-brown)](https://tenor.com/mFI7Nr5f5D2.gif)
+<div align="center">
+<picture>
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/fakexale/engine-next/img/engine-light.png">
+  <img src="https://raw.githubusercontent.com/fakexale/engine-next/img/engine-dark.png">
+</picture>
 
-Engine3, an upcoming Roblox game framework, primarily made for my personal use. 
-Primary usage involves using a tool to sync filesystem files into Roblox Studio.
+[![](https://img.shields.io/github/license/fakexale/engine-next)](https://github.com/fakexale/engine-next/blob/main/LICENSE)
+[![](https://img.shields.io/badge/made_with-rojo-red)](https://github.com/rojo-rbx/rojo)
+[![](https://img.shields.io/badge/chefs_kiss-do_they_really-brown)](https://tenor.com/mFI7Nr5f5D2.gif)
 
-Currently unfinished, with spotty support for features all around.
+An opioniated, personal use tailored Roblox Game Framework. Currently unfinished.
 
-## Compilation
+</div>
+
+# Pending Migration
+This project will be hosted on [fakexale](https://github.com/fakexale), until it is stable enough.
+
+After that point, it will be migrated to the [seriare](https://github/seriare) organization.
+
+# Compilation
 Compilation on Visual Studio Code is easy, for other editors you'll need to enter commands manually, however.
 
-### VSCode
-**Build Tasks**
+This assumes you have the tooling required installed.
+
+## VSCode
+**Build Tasks**:
 Access Build Tasks with ``Ctrl+Shift+B``
 
-Then, if you don't have packages installed, begin with ``setup``. After that, just do ``build``.
+To get started, simply start with the ``setup`` task, followed by ``build``.
 
 You will now have a ``build.rbxm`` model file in your project root. Have fun.
+
+## Other Editors
+**Bash Scripts**: Bash Scripts, with parallel functionality will be provided at a later date.
+
+This will require you to use Windows Subsystem for Linux, or using Git Bash.

@@ -1,50 +1,80 @@
-local _VERSION = "v1.0.0"
+local Players = game:GetService("Players")
 
-export type StartOptions = {
-	ProductionDebugging: boolean,
-	StudioDebugging: boolean,
-}
-
+local Packages = script.Parent.Packages
 local EngineLib = script.Parent.Lib
 
-local Runtime = require(EngineLib.Runtime)
-local Signal = require(EngineLib.Signal)
-
-local DefaultOptions: StartOptions = {
-	ProductionDebugging = false,
-	StudioDebugging = true,
-}
+local Promise = require(Packages.Promise)
 
 local EngineServer = {
-	Lib = script.Parent.Lib,
+	Lib = EngineLib,
+	Imported = {},
 }
-EngineServer.Started = false
-EngineServer.SignalTest = Signal.new()
 
-function EngineServer.Start(options: StartOptions)
-	assert(not EngineServer.Started, "unnamed")
+function EngineServer:_HandleConnections()
+	local function PlayerAdded(player: Player)
+		for _, module in self.Imported do
+			if type(module.PlayerAdded) ~= "function" then continue end
 
-	local usedOptions
-
-	if not options then
-		usedOptions = DefaultOptions
-	else
-		assert(typeof(options) == "table", "unnamed")
-
-		usedOptions = options
-
-		for p, v in DefaultOptions do
-			if not usedOptions[p] then
-				usedOptions[v] = v
-			end
+			task.spawn(module.PlayerAdded, player)
 		end
 	end
 
-	Runtime:SetSettings(usedOptions)
+	local function PlayerRemoving(player: Player)
+		for _, module in self.Imported do
+			if type(module.PlayerRemoving) ~= "function" then continue end
+
+			task.spawn(module.PlayerRemoving, player)
+		end
+	end
+
+	local function BindToClose()
+		for _, module in self.Imported do
+			if type(module.BindToClose) ~= "function" then continue end
+
+			task.spawn(module.BindToClose)
+		end
+	end
+
+	game:BindToClose(BindToClose)
+	Players.PlayerAdded:Connect(PlayerAdded)
+	Players.PlayerRemoving:Connect(PlayerRemoving)
+end
+
+function EngineServer:Import(path: Instance)
+	return Promise.new(function(resolve)
+		local Inits = {}
+
+		for _, module in path:GetChildren() do
+			local requiredModule = require(module)
+			self.Imported[module.Name] = requiredModule
+
+  			if type(requiredModule.OnInit) ~= "function" then continue end
+			
+			debug.setmemorycategory(module.Name)
+
+    		table.insert(Inits,	Promise.new(function(_resolve)
+					debug.setmemorycategory(module.Name)
+					requiredModule:OnInit()
+					_resolve()
+				end)
+			)
+		end
+
+		resolve(Promise.all(Inits))
+	end):andThen(function()
+		for p, module in self.Imported do
+			if type(module.OnStart) ~= "function" then continue end
+
+			task.spawn(function()
+				debug.setmemorycategory(p)
+				module:OnStart()
+			end)
+		end
+	end):andThen(function()
+		EngineServer:_HandleConnections()
+	end)
 end
 
 return table.freeze({
-	Start = function()
-		return "Engine3 intialisation methods are uncomplete."
-	end,
+	Import = EngineServer.Import
 })

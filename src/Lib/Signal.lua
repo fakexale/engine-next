@@ -37,19 +37,6 @@ function Signal.new<T...>(): Signal<T...>
 	return setmetatable({}, Signal)
 end
 
--- // untested, rewrite later.
-function Signal.wrap<T...>(scriptSignal: RBXScriptSignal): Signal<T...>
-	assert(typeof(scriptSignal) == "RBXScriptSignal", "ScriptSignal is not a RBXScriptSignal!")
-
-	local self = Signal.new()
-
-	scriptSignal:Connect(function(...)
-		self:Fire(...)
-	end)
-
-	return self
-end
-
 function Signal:Fire(...)
 	for callback in self do
 		if not usableThread then
@@ -101,5 +88,4 @@ end
 
 return table.freeze({
 	new = Signal.new,
-	wrap = Signal.wrap
 })
