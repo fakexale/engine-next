@@ -31,6 +31,11 @@ To get started, simply start with the ``setup`` task, followed by ``build``.
 You will now have a ``build.rbxm`` model file in your project root. Have fun.
 
 ## Other Editors
-**Bash Scripts**: Bash Scripts, with parallel functionality will be provided at a later date.
+**Bash Scripts**: Using Bash Shell scripts to automate setup is supported.
 
-This will require you to use Windows Subsystem for Linux, or using Git Bash.
+This will require you to use Windows Subsystem for Linux, or using Git Bash. 
+Scripts are located in the ``scripts`` directory.
+
+To get started, simply start with the ``setup.sh``, followed by ``build.sh``.
+
+You will now have a ``build.rbxm`` model file in your project root. Have fun.
