@@ -75,7 +75,4 @@ function EngineServer:Import(path: Instance)
 	end)
 end
 
-return table.freeze({
-	Lib  = EngineServer.Lib,
-	Import = EngineServer.Import
-})
+return table.freeze(EngineServer)
