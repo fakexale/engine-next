@@ -1,7 +1,7 @@
 local RunService = game:GetService("RunService")
 
 local Runtime = {
-	["RuntimeContext"] = table.freeze({
+	["Context"] = table.freeze({
 		Server = RunService:IsServer(),
 		Client = RunService:IsClient(),
 
@@ -9,7 +9,7 @@ local Runtime = {
 		Playtest = RunService:IsStudio() and RunService:IsRunning(),
 	}),
 
-	["RuntimeObjects"] = {
+	["Objects"] = {
 		["Packets"] = {},
 	},
 }
@@ -33,4 +33,4 @@ function Runtime:BindHeartbeatEvery(ticks: number, fn: () -> ()): () -> ()
 	end
 end
 
-return table.freeze(Runtime)
+return Runtime
