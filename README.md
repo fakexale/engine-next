@@ -8,14 +8,10 @@
 [![](https://img.shields.io/badge/made_with-rojo-red)](https://github.com/rojo-rbx/rojo)
 [![](https://img.shields.io/badge/chefs_kiss-do_they_really-brown)](https://tenor.com/mFI7Nr5f5D2.gif)
 
-An opioniated, personal use tailored Roblox Game Framework. Currently unfinished.
+An opinionated, personal use tailoed Roblox Module Loader.
+Bundled with utility modules, to save time and lines of code for the scripter, to free up time for other tasks.
 
 </div>
-
-# Pending Migration
-This project will be hosted on [fakexale](https://github.com/fakexale), until it is stable enough.
-
-After that point, it will be migrated to the [seriare](https://github/seriare) organization.
 
 # Compilation
 Compilation on Visual Studio Code is easy, for other editors you'll need to enter commands manually, however.

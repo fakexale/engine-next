@@ -5,11 +5,23 @@ local EngineLib = script.Parent.Lib
 
 local Promise = require(Packages.Promise)
 
+--[=[
+	@class EngineServer
+
+	Server-sided portion of the framework, parallel to EngineClient.
+	Used to access server-sided scopes, no other differences.
+]=]--
 local EngineServer = {
 	Lib = EngineLib,
 	Imported = {},
 }
 
+--[=[
+	@private 
+
+	Handles common connections such as PlayerAdded, PlayerRemoving and BindToClose.
+	You can use [Loader](/api/Loader) to achieve this with a diverse API.
+]=]--
 function EngineServer:_HandleConnections()
 	local function PlayerAdded(player: Player)
 		for _, module in self.Imported do
@@ -40,6 +52,11 @@ function EngineServer:_HandleConnections()
 	Players.PlayerRemoving:Connect(PlayerRemoving)
 end
 
+--[=[
+	Imports the children of ``path`` which are of class ``ModuleScript``.
+
+	Essentially, requires and sets up commonly used connections a script might have.
+]=]--
 function EngineServer:Import(path: Instance)
 	return Promise.new(function(resolve)
 		local Inits = {}

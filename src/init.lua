@@ -1,7 +1,5 @@
 local RunService = game:GetService("RunService")
 
-warn("Engine3 is unfinished, but is still usable excluding EngineClient.")
-
 if RunService:IsServer() then
 	return require(script.EngineServer)
 else

@@ -7,11 +7,7 @@ local Runtime = {
 
 		Studio = RunService:IsStudio(),
 		Playtest = RunService:IsStudio() and RunService:IsRunning(),
-	}),
-
-	["Objects"] = {
-		["Packets"] = {},
-	},
+	})
 }
 
 function Runtime:BindHeartbeatEvery(ticks: number, fn: () -> ()): () -> ()
