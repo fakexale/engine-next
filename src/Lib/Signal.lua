@@ -13,12 +13,16 @@ local function yield(): ()
 	end
 end
 
-type Disconnect = () -> ()
+type Disconnect = () -> () -> Disconnect
 
 export type Module<T...> = {
 	__tostring: (self: Signal<T...>) -> "CustomSignal",
+	new: () -> Signal<T...>,
 	Fire: (self: Signal<T...>, T...) -> (),
 	Connect: (self: Signal<T...>, (T...) -> ()) -> Disconnect,
+	ConnectLimited: (self: Signal<T...>, (T...) -> (), Amount: number) -> Disconnect,
+	ConnectUntil: (self: Signal<T...>, (T...) -> (), Seconds: number) -> () -> (),
+	ConnectStrict: (self: Signal<T...>, (T...) -> ()) -> Disconnect,
 	Once: (self: Signal<T...>, (T...) -> ()) -> Disconnect,
 	Wait: (self: Signal<T...>) -> T...,
 	DisconnectAll: (self: Signal<T...>) -> (),
@@ -56,7 +60,57 @@ function Signal:Connect(callback)
 
 	return function()
 		self[callback] = nil
+
+		return function()
+			self:Connect(callback)
+		end
 	end
+end
+
+function Signal:ConnectLimited<T...>(callback: (T...) -> (), Amount: number): Disconnect
+	local Fired = 0
+	local Connection
+
+	Connection = self:Connect(function(...)
+		Fired += 1
+
+		if Fired == Amount then
+			Connection()
+		end
+
+		callback(...)
+	end)
+
+	return Connection
+end
+
+function Signal:ConnectUntil<T...>(callback: (T...) -> (), Seconds: number): () -> ()
+	local Connection
+
+	Connection = self:Connect(callback)
+
+	local Delayer = task.delay(Seconds, function()
+		Connection()
+	end)
+
+	return function()
+		if coroutine.status(Delayer) ~= "dead" then
+			task.cancel(Delayer)
+			Connection()
+		end
+	end
+end
+
+function Signal:ConnectStrict<T...>(callback: (T...) -> ()): Disconnect
+	local Connection
+
+	Connection = self:Connect(function(...)
+		if callback(...) == false then
+			Connection()
+		end
+	end)
+
+	return Connection
 end
 
 function Signal:Once(callback)
