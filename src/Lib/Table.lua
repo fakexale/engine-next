@@ -1,9 +1,11 @@
+-- even if the typecheckers underlines some of the functions, everything should be fine - @denispionicul
+
 local Table = {}
 
-function Table.DeepCopy<T>(target: T): T
+function Table.DeepCopy<K, V>(target: {[K]: V}): {[K]: V}
 	local dummy = table.clone(target)
 
-	for p, val: { T } | any in dummy do
+	for p, val in dummy do
 		if typeof(val) ~= "table" then
 			continue
 		end
@@ -43,7 +45,8 @@ function Table.MergeArrays<T, K>(array1: { T }, array2: { K }): { T & K }
 	return result
 end
 
-function Table.Reconcile<T, K>(target: { T }, template: { K }): { T & K }
+-- don't have a specific fix for this 
+function Table.Reconcile<T, K>(target: T, template: K ): T & K 
 	local dummy = table.clone(target)
 
 	for k, val in template do
