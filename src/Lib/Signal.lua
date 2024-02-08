@@ -62,7 +62,7 @@ function Signal:Connect(callback)
 		self[callback] = nil
 
 		return function()
-			self:Connect(callback)
+			return self:Connect(callback)
 		end
 	end
 end
