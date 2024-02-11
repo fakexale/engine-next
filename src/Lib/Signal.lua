@@ -13,17 +13,17 @@ local function yield(): ()
 	end
 end
 
-type Disconnect = () -> ()
+type Connection = () -> ()
 
 export type Module<T...> = {
 	__tostring: (self: Signal<T...>) -> "CustomSignal",
 	new: () -> Signal<T...>,
 	Fire: (self: Signal<T...>, T...) -> (),
-	Connect: (self: Signal<T...>, (T...) -> ()) -> Disconnect,
-	ConnectLimited: (self: Signal<T...>, (T...) -> (), Amount: number) -> Disconnect,
+	Connect: (self: Signal<T...>, (T...) -> ()) -> Connection,
+	ConnectLimited: (self: Signal<T...>, (T...) -> (), Amount: number) -> Connection,
 	ConnectUntil: (self: Signal<T...>, (T...) -> (), Seconds: number) -> () -> (),
-	ConnectStrict: (self: Signal<T...>, (T...) -> ()) -> Disconnect,
-	Once: (self: Signal<T...>, (T...) -> ()) -> Disconnect,
+	ConnectStrict: (self: Signal<T...>, (T...) -> ()) -> Connection,
+	Once: (self: Signal<T...>, (T...) -> ()) -> Connection,
 	Wait: (self: Signal<T...>) -> T...,
 	DisconnectAll: (self: Signal<T...>) -> (),
 }
@@ -89,7 +89,7 @@ end
 	Connection()
 	```
 ]=]--
-function Signal:Connect<T...>(callback: (T...) -> ()): Disconnect
+function Signal:Connect<T...>(callback: (T...) -> ()): Connection
 	assert(typeof(callback) == "function", "Callback is not a function!")
 	assert(self[callback] ~= nil, "Callback already connected to Signal!")
 
@@ -104,7 +104,7 @@ function Signal:Connect<T...>(callback: (T...) -> ()): Disconnect
 	end
 end
 
-function Signal:ConnectLimited<T...>(callback: (T...) -> (), Amount: number): Disconnect
+function Signal:ConnectLimited<T...>(callback: (T...) -> (), Amount: number): Connection
 	local Fired = 0
 	local Connection
 
@@ -138,7 +138,7 @@ function Signal:ConnectUntil<T...>(callback: (T...) -> (), Seconds: number): () 
 	end
 end
 
-function Signal:ConnectStrict<T...>(callback: (T...) -> ()): Disconnect
+function Signal:ConnectStrict<T...>(callback: (T...) -> ()): Connection
 	local Connection
 
 	Connection = self:Connect(function(...)
