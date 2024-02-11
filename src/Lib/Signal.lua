@@ -13,7 +13,7 @@ local function yield(): ()
 	end
 end
 
-type Disconnect = () -> () -> Disconnect
+type Disconnect = () -> ()
 
 export type Module<T...> = {
 	__tostring: (self: Signal<T...>) -> "CustomSignal",
@@ -96,10 +96,10 @@ function Signal:Connect<T...>(callback: (T...) -> ()): Disconnect
 	self[callback] = true
 
 	return function()
-		self[callback] = nil
-
-		return function()
-			return self:Connect(callback)
+		if self[callback] then
+			self[callback] = nil
+		else
+			self:Connect(callback)
 		end
 	end
 end
