@@ -13,6 +13,13 @@ local function yield(): ()
 	end
 end
 
+--[=[
+	@type Disconnect () -> () -> Disconnect
+	@within Signal
+
+	Returned by ``Signal.new``, used to Disconnect the function.
+]=]
+--
 type Disconnect = () -> () -> Disconnect
 
 export type Module<T...> = {
@@ -34,8 +41,9 @@ export type Signal<T...> = typeof(setmetatable({} :: { [(T...) -> ()]: boolean }
 
 	A simple custom implementation for [RBXScriptSignals](https://create.roblox.com/docs/reference/engine/datatypes/RBXScriptSignal).
 
-	Unlike most Signal implementions, does not have a Disconnect method.
-]=]--
+	Unlike most Signal implementions, does not have a discrete Disconnect method.
+]=]
+--
 local Signal = {}
 Signal.__index = Signal
 
@@ -51,7 +59,8 @@ end
 	```
 
 	@return Signal
-]=]--
+]=]
+--
 function Signal.new<T...>(): Signal<T...>
 	return setmetatable({}, Signal)
 end
@@ -65,7 +74,8 @@ end
 	-- // Signal gets fired with parameters "Hello, world!"
 	MySignal:Fire("Hello, world!")
 	```
-]=]--
+]=]
+--
 function Signal:Fire(...: any)
 	for callback in self do
 		if not usableThread then
@@ -88,7 +98,8 @@ end
 	-- // Disconnects the Signal
 	Connection()
 	```
-]=]--
+]=]
+--
 function Signal:Connect<T...>(callback: (T...) -> ()): Disconnect
 	assert(typeof(callback) == "function", "Callback is not a function!")
 	assert(self[callback] ~= nil, "Callback already connected to Signal!")
@@ -104,50 +115,98 @@ function Signal:Connect<T...>(callback: (T...) -> ()): Disconnect
 	end
 end
 
-function Signal:ConnectLimited<T...>(callback: (T...) -> (), Amount: number): Disconnect
-	local Fired = 0
-	local Connection
+--[=[
+	Connects the event to the callback, automaticly disconnects after the event was fired an amount of times. 
 
-	Connection = self:Connect(function(...)
-		Fired += 1
+	```lua
+	-- // Will get disconnected after the callback has connect 15 times
+	local Connection = Signal:ConnectLimited(myFunc, 15)
+	```
+]=]
+--
+function Signal:ConnectLimited<T...>(callback: (T...) -> (), amount: number): Disconnect
+	local fired = 0
+	local connection
 
-		if Fired == Amount then
-			Connection()
+	connection = self:Connect(function(...)
+		fired += 1
+
+		if fired == amount then
+			connection()
 		end
 
 		callback(...)
 	end)
 
-	return Connection
+	return connection
 end
 
-function Signal:ConnectUntil<T...>(callback: (T...) -> (), Seconds: number): () -> ()
-	local Connection
+--[=[
+	Connects the event to the callback, automatically disconnects after the time specified elapses.
 
-	Connection = self:Connect(callback)
+	```lua
+	-- // Disconnects after 15 seconds have elapsed after the connection.
+	local MyConnection = Signal:ConnectUntil(myFunc, 15)
+	```
+]=]
+--
+function Signal:ConnectUntil<T...>(callback: (T...) -> (), seconds: number): () -> ()
+	local connection
 
-	local Delayer = task.delay(Seconds, function()
-		Connection()
+	connection = self:Connect(callback)
+
+	local delayer = task.delay(seconds, function()
+		connection()
 	end)
 
 	return function()
-		if coroutine.status(Delayer) ~= "dead" then
-			task.cancel(Delayer)
-			Connection()
+		if coroutine.status(delayer) ~= "dead" then
+			task.cancel(delayer)
+			connection()
 		end
 	end
 end
 
-function Signal:ConnectStrict<T...>(callback: (T...) -> ()): Disconnect
-	local Connection
+--[=[
+	Connects the event to the callback, if the callback returns true, it will disconnect the event. 
 
-	Connection = self:Connect(function(...)
+	```lua
+	-- Script 1
+
+	-- // Returns whether a number in nums is even
+	local function myFunc(nums: { number }): boolean
+		for _, v in pairs(nums) do
+			if (v % 2 == 0) then
+				return true
+			else
+				return false
+			end
+		end
+	end
+
+	local MyConnection = MySignal:ConnectStrict(myFunc)
+
+	-- Script 2
+
+	-- // Won't trigger a disconnect
+	MySignal:Fire({1, 3, 5})
+
+	-- // Will trigger a disconnect
+	MySignal:Fire({2, 4, 6})
+	```
+]=]
+--
+
+function Signal:ConnectStrict<T...>(callback: (T...) -> ()): Disconnect
+	local connection
+
+	connection = self:Connect(function(...)
 		if callback(...) == false then
-			Connection()
+			connection()
 		end
 	end)
 
-	return Connection
+	return connection
 end
 
 --[=[
@@ -157,8 +216,9 @@ end
 	-- // Gets disconnected after it has been connected once.
 	local Connection = MySignal:Once(...)
 	```
-]=]--
-function Signal:Once(callback)
+]=]
+--
+function Signal:Once<T...>(callback: (T...) -> ())
 	assert(typeof(callback) == "function", "Callback is not a function!")
 
 	local connection
@@ -180,7 +240,8 @@ end
 	-- // Prints only after the Signal has fired.
 	print("Hello, world!")
 	```
-]=]--
+]=]
+--
 function Signal:Wait()
 	local running = coroutine.running()
 
@@ -201,7 +262,8 @@ end
 	-- // Disconnects both Connection1 and Connection2.
 	MySignal:DisconnectAll()
 	```
-]=]--
+]=]
+--
 function Signal:DisconnectAll()
 	table.clear(self)
 end
